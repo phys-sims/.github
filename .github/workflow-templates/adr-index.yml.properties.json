@@ -1,0 +1,6 @@
+{
+  "name": "ADR index",
+  "description": "Rebuild ADR index files when ADRs change.",
+  "iconName": "book",
+  "categories": ["Documentation", "Automation"]
+}

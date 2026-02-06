@@ -1,0 +1,6 @@
+{
+  "name": "Seed labels",
+  "description": "Populate repository labels from the shared label set.",
+  "iconName": "tag",
+  "categories": ["Project management", "Automation"]
+}
