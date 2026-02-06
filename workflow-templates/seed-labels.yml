@@ -9,4 +9,4 @@ permissions:
 
 jobs:
   seed:
-    uses: phys-sims/.github/.github/workflows/labels-seed.yml@<ref>
+    uses: phys-sims/.github/.github/workflows/labels-seed.yml@v1

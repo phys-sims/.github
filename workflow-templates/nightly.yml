@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   slow-tests:
-    uses: phys-sims/.github/.github/workflows/python-pytest.yml@<ref>
+    uses: phys-sims/.github/.github/workflows/python-pytest.yml@v1
     with:
       python-versions: '["3.11"]'
       pytest-args: '-q -m "slow"'
