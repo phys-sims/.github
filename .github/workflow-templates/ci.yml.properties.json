@@ -1,0 +1,6 @@
+{
+  "name": "CI",
+  "description": "Run the shared Python CI workflow with phys-sims defaults.",
+  "iconName": "check-circle",
+  "categories": ["Continuous integration", "Python"]
+}

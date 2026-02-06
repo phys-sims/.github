@@ -1,0 +1,6 @@
+{
+  "name": "Project field sync",
+  "description": "Sync labels into project fields when issues or pull requests change.",
+  "iconName": "project",
+  "categories": ["Project management", "Automation"]
+}

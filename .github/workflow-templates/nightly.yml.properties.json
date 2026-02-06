@@ -1,0 +1,6 @@
+{
+  "name": "Nightly slow tests",
+  "description": "Run slow pytest suites on a nightly schedule.",
+  "iconName": "clock",
+  "categories": ["Continuous integration", "Testing"]
+}
