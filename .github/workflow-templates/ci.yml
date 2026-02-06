@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]          # run on all branches so feature branches get CI
+  pull_request:
+    branches: ["main"]        # PRs targeting main
+
+jobs:
+  ci:
+    uses: phys-sims/.github/.github/workflows/python-ci.yml@main
+    with:
+      python-versions: '["3.11"]'   #["3.10","3.11","3.12"]
+      install-phys-pipeline: true   # true if depends on phys-pipeline, remove this and line below if false
+      phys-pipeline-repo: "phys-sims/phys-pipeline" 
+      install-abcdef-sim: true  # ditto for abcdef-sim
+      abcdef-sim-repo: "phys-sims/abcdef-sim"

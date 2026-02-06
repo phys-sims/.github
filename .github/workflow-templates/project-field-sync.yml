@@ -1,0 +1,23 @@
+name: Project field sync (labels -> fields)
+
+on:
+  issues:
+    types: [opened, edited, reopened, labeled, unlabeled]
+  pull_request_target:
+    types: [opened, edited, reopened, ready_for_review, synchronize, labeled, unlabeled, closed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    uses: phys-sims/.github/.github/workflows/projects-field-sync.yml@<ref>
+    with:
+      owner: phys-sims
+      owner-kind: org
+      project-number: 2
+      project-title: ""
+      enable-deliverable: false
+    secrets:
+      project-pat: ${{ secrets.ADD_TO_PROJECT_PAT }}

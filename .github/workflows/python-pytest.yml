@@ -1,0 +1,89 @@
+name: Python pytest (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      python-versions:
+        description: JSON array of Python versions (e.g. ["3.11","3.12"])
+        required: false
+        type: string
+        default: '["3.11"]'
+      pytest-args:
+        description: Arguments passed to pytest (e.g. -q -m "slow")
+        required: false
+        type: string
+        default: "-q"
+      install-phys-pipeline:
+        description: Install phys-pipeline from source before running tests
+        required: false
+        type: boolean
+        default: false
+      phys-pipeline-repo:
+        description: "<owner>/<repo> for phys-pipeline"
+        required: false
+        type: string
+        default: "phys-sims/phys-pipeline"
+      phys-pipeline-ref:
+        description: Git ref for phys-pipeline
+        required: false
+        type: string
+        default: "main"
+      install-abcdef-sim:
+        description: Install abcdef-sim from source before running tests
+        required: false
+        type: boolean
+        default: false
+      abcdef-sim-repo:
+        description: "<owner>/<repo> for abcdef-sim"
+        required: false
+        type: string
+        default: "phys-sims/abcdef-sim"
+      abcdef-sim-ref:
+        description: Git ref for abcdef-sim
+        required: false
+        type: string
+        default: "main"
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    name: pytest (python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{ fromJSON(inputs.python-versions) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dev deps (editable)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+          pip install pre-commit
+
+      - name: Install phys-pipeline from source
+        if: ${{ inputs.install-phys-pipeline }}
+        run: |
+          python -m pip install --upgrade pip
+          pip install "git+https://github.com/${{ inputs.phys-pipeline-repo }}.git@${{ inputs.phys-pipeline-ref }}"
+
+      - name: Install abcdef-sim from source
+        if: ${{ inputs.install-abcdef-sim }}
+        run: |
+          python -m pip install --upgrade pip
+          pip install "git+https://github.com/${{ inputs.abcdef-sim-repo }}.git@${{ inputs.abcdef-sim-ref }}"
+
+      - name: Run pytest
+        run: pytest ${{ inputs.pytest-args }}

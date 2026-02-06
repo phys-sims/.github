@@ -1,0 +1,12 @@
+name: Seed labels
+on:
+  push:
+    paths: [".github/workflows/seed-labels.yml"]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  seed:
+    uses: phys-sims/.github/.github/workflows/labels-seed.yml@<ref>

@@ -1,0 +1,47 @@
+name: ADR index
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: false
+        type: string
+        default: "3.x"
+      tool:
+        description: Command to run (relative to repo root)
+        required: false
+        type: string
+        default: "python scripts/adr_tools.py reindex"
+      index-path:
+        description: Path(s) to commit (glob allowed by git-auto-commit-action)
+        required: false
+        type: string
+        default: "docs/adr/INDEX.md"
+      commit-message:
+        required: false
+        type: string
+        default: "chore(docs): update ADR index"
+
+permissions:
+  contents: write
+
+jobs:
+  reindex:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true        # ensure the token is usable for push
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Reindex ADRs
+        run: ${{ inputs.tool }}
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: ${{ inputs.commit-message }}
+          file_pattern: ${{ inputs.index-path }}
