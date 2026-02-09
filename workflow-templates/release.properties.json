@@ -1,0 +1,6 @@
+{
+  "name": "Publish to PyPI",
+  "description": "Build and publish Python packages to PyPI on version tags.",
+  "iconName": "package",
+  "categories": ["Continuous integration", "Python", "Publishing"]
+}
