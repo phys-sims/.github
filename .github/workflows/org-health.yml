@@ -13,7 +13,7 @@ jobs:
   health:
     runs-on: ubuntu-latest
     env:
-      ORG: phys-sims              
+      ORG: phys-sims
       REPOS_DIR: /tmp/org_repos
       GH_TOKEN: ${{ secrets.ORG_HEALTH_TOKEN }}
 
@@ -38,26 +38,33 @@ jobs:
           mkdir -p "$REPOS_DIR"
           cd "$REPOS_DIR"
 
-          gh api --paginate --slurp "orgs/$ORG/repos?per_page=100&type=all" \
-            | python - <<'PY' \
-            | while IFS=$'\t' read -r full name; do
-          import json, sys
-          repos = json.load(sys.stdin)
-          for r in repos:
-              if r.get("archived"):
-                  continue
-              # If you want to exclude forks, uncomment:
-              # if r.get("fork"): continue
-              print(f"{r['full_name']}\t{r['name']}")
-          PY
-              if [ -d "$name/.git" ]; then
-                echo "Updating $full"
-                git -C "$name" pull --ff-only
-              else
-                echo "Cloning $full"
-                gh repo clone "$full" "$name"
-              fi
-            done
+          gh api --paginate --slurp "orgs/$ORG/repos?per_page=100&type=all" > repos.json
+
+          python -c '
+import json
+import pathlib
+import sys
+
+pages = json.loads(pathlib.Path(sys.argv[1]).read_text())
+for page in pages:
+    repos = page if isinstance(page, list) else [page]
+    for r in repos:
+        if r.get("archived"):
+            continue
+        # If you want to exclude forks, uncomment:
+        # if r.get("fork"): continue
+        print(f"{r['full_name']}\t{r['name']}")
+' repos.json | while IFS=$'\t' read -r full name; do
+            if [ -d "$name/.git" ]; then
+              echo "Updating $full"
+              git -C "$name" pull --ff-only
+            else
+              echo "Cloning $full"
+              gh repo clone "$full" "$name"
+            fi
+          done
+
+          rm -f repos.json
 
       - name: Run cloc per repo
         run: |
