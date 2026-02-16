@@ -55,7 +55,7 @@ Pick the repo that matches your goal:
 
 (Org-wide issue/PR templates are intended to live in this repository to standardize contributions.)
 
-## Org Health Summary 
+
 <!-- HEALTH:START -->
 
 ## Org health (auto-updated)
