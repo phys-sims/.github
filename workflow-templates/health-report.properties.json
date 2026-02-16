@@ -1,5 +1,0 @@
-{
-  "name": "Org health report",
-  "description": "Generates docs/HEALTH_REPORT.md and updates profile/README.md with key findings on a schedule.",
-  "iconName": "pulse"
-}
