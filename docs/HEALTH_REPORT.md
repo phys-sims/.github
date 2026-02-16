@@ -1,11 +1,11 @@
 # Org Health Report
 
-_Auto-generated: **2026-02-16 01:37 UTC**_
+_Auto-generated: **2026-02-16 13:40 UTC**_
 
 ## Summary
 
 - Repos counted: **15** (private: **3**)
-- LOC (code): **29,738**  |  comment: **828**  |  blank: **6,201**
+- LOC (code): **29,782**  |  comment: **828**  |  blank: **6,208**
 - Open issues: **0**  |  Open PRs: **1**
 - CI workflows present: **11/15**
 - `tests/` present: **9/15**
@@ -20,7 +20,7 @@ _Auto-generated: **2026-02-16 01:37 UTC**_
 | `phys-sims-utils` |  | phys-sims-utils | 4,852 | 2026-02-15 | 0 | 0 | ✅ | ✅ |
 | `phys-pipeline` |  | phys-pipeline | 4,409 | 2026-02-12 | 0 | 0 | ✅ | ✅ |
 | `abcdef-sim` |  | abcdef-sim | 2,077 | 2026-02-13 | 0 | 0 | ✅ | ✅ |
-| `cpa-architecture` |  |  | 1,953 | 2026-02-16 | 0 | 0 | ✅ |  |
+| `cpa-architecture` |  |  | 1,997 | 2026-02-16 | 0 | 0 | ✅ |  |
 | `cookiecutter-phys` |  |  | 992 | 2026-02-06 | 0 | 0 |  |  |
 | `cpa-sim` |  | cpa-sim | 880 | 2026-02-15 | 0 | 0 | ✅ | ✅ |
 | `fiber-link-workspace` |  |  | 772 | 2026-02-14 | 0 | 0 |  |  |
@@ -36,8 +36,8 @@ _Auto-generated: **2026-02-16 01:37 UTC**_
 
 | Repo | Last push | LOC (code) |
 |---|---:|---:|
+| `cpa-architecture` | 2026-02-16 | 1,997 |
 | `.github` | 2026-02-16 | 0 |
-| `cpa-architecture` | 2026-02-16 | 1,953 |
 | `gnlse-sim` | 2026-02-15 | 297 |
 | `phys-sims-utils` | 2026-02-15 | 4,852 |
 | `cpa-sim` | 2026-02-15 | 880 |
@@ -61,7 +61,7 @@ _Auto-generated: **2026-02-16 01:37 UTC**_
 | `abcdef-testbench` | 🔒 | `main` | abcdef-testbench | 114 | 2026-02-06 | 0 | 0 | 1 | YAML:55, TOML:28, Python:19, Markdown:12 |
 | `cookiecutter-phys` |  | `main` |  | 992 | 2026-02-06 | 0 | 0 | 0 | YAML:625, Python:173, Markdown:121, TOML:64, JSON:9 |
 | `cookiecutter-testbench` |  | `main` |  | 125 | 2026-02-13 | 0 | 0 | 0 | YAML:55, TOML:28, Python:19, Markdown:12, JSON:11 |
-| `cpa-architecture` |  | `main` |  | 1,953 | 2026-02-16 | 0 | 0 | 3 | Python:915, Markdown:847, YAML:108, Bourne Shell:55, TOML:28 |
+| `cpa-architecture` |  | `main` |  | 1,997 | 2026-02-16 | 0 | 0 | 3 | Python:915, Markdown:891, YAML:108, Bourne Shell:55, TOML:28 |
 | `cpa-sim` |  | `main` | cpa-sim | 880 | 2026-02-15 | 0 | 0 | 2 | Markdown:637, YAML:115, Python:78, TOML:50 |
 | `cpa-testbench` | 🔒 | `main` | cpa-testbench | 114 | 2026-02-15 | 0 | 0 | 1 | YAML:55, TOML:28, Python:19, Markdown:12 |
 | `cpa-workspace` | 🔒 | `main` |  | 378 | 2026-02-13 | 0 | 0 | 0 | Python:203, Markdown:88, Bourne Shell:55, TOML:32 |
