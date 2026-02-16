@@ -40,21 +40,7 @@ jobs:
 
           gh api --paginate --slurp "orgs/$ORG/repos?per_page=100&type=all" > repos.json
 
-          python -c '
-import json
-import pathlib
-import sys
-
-pages = json.loads(pathlib.Path(sys.argv[1]).read_text())
-for page in pages:
-    repos = page if isinstance(page, list) else [page]
-    for r in repos:
-        if r.get("archived"):
-            continue
-        # If you want to exclude forks, uncomment:
-        # if r.get("fork"): continue
-        print(f"{r['full_name']}\t{r['name']}")
-' repos.json | while IFS=$'\t' read -r full name; do
+          python -c "import json,pathlib,sys; pages=json.loads(pathlib.Path(sys.argv[1]).read_text()); [print(f\"{r['full_name']}\\t{r['name']}\") for page in pages for r in (page if isinstance(page, list) else [page]) if not r.get('archived')]" repos.json | while IFS=$'\t' read -r full name; do
             if [ -d "$name/.git" ]; then
               echo "Updating $full"
               git -C "$name" pull --ff-only
