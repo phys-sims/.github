@@ -6,7 +6,11 @@ REPOS_DIR="${1:?usage: run_cloc.sh <repos_dir>}"
 # Conservative excludes: caches, build outputs, virtualenvs, node_modules, etc.
 EXCLUDES=".git,.venv,venv,node_modules,dist,build,__pycache__,.mypy_cache,.pytest_cache,.ruff_cache,.tox,.nox,.cache,site-packages"
 
-mkdir -p "$GITHUB_WORKSPACE/.health/cloc_json"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
+OUT_DIR="$ROOT_DIR/.health/cloc_json"
+
+mkdir -p "$OUT_DIR"
 
 cd "$REPOS_DIR"
 for d in */ ; do
@@ -16,5 +20,5 @@ for d in */ ; do
   cloc "$repo" \
     --exclude-dir="$EXCLUDES" \
     --json --quiet \
-    --out "$GITHUB_WORKSPACE/.health/cloc_json/${repo}.json"
+    --out "$OUT_DIR/${repo}.json"
 done
