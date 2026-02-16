@@ -6,6 +6,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -116,14 +117,36 @@ def inspect_repo_files(repo_dir: Path) -> Tuple[bool, Optional[str], bool, int, 
     return has_pyproject, project_name, has_tests, workflow_count, has_precommit
 
 def count_open_prs(owner: str, repo: str) -> int:
+    # Prefer Search API when available (fast counts), but it can return 404
+    # for tokens/org setups without search access. Fall back to listing PRs.
     q = f"repo:{owner}/{repo} is:pr is:open"
-    res = gh_api_json("search/issues", fields=[("q", q)])
-    return int(res.get("total_count", 0))
+    try:
+        res = gh_api_json("search/issues", fields=[("q", q)])
+        return int(res.get("total_count", 0))
+    except subprocess.CalledProcessError:
+        print(
+            f"warn: search/issues unavailable for {owner}/{repo}; falling back to pulls endpoint",
+            file=sys.stderr,
+        )
+
+    prs = gh_api_json_slurp(f"repos/{owner}/{repo}/pulls?state=open&per_page=100")
+    return len(prs)
 
 def count_open_issues(owner: str, repo: str) -> int:
+    # Prefer Search API when available (correct issue-only counts), but fall
+    # back to repository issues endpoint and filter out PR entries.
     q = f"repo:{owner}/{repo} is:issue is:open"
-    res = gh_api_json("search/issues", fields=[("q", q)])
-    return int(res.get("total_count", 0))
+    try:
+        res = gh_api_json("search/issues", fields=[("q", q)])
+        return int(res.get("total_count", 0))
+    except subprocess.CalledProcessError:
+        print(
+            f"warn: search/issues unavailable for {owner}/{repo}; falling back to issues endpoint",
+            file=sys.stderr,
+        )
+
+    issues = gh_api_json_slurp(f"repos/{owner}/{repo}/issues?state=open&per_page=100")
+    return sum(1 for item in issues if "pull_request" not in item)
 
 def list_repos(owner: str) -> List[dict]:
     return gh_api_json_slurp(f"orgs/{owner}/repos?per_page=100&type=all")
@@ -254,7 +277,7 @@ def render_report(rows: List[RepoRow]) -> str:
     lines.append("## Notes")
     lines.append("")
     lines.append("- LOC is computed by `cloc` with common cache/build/vendor directories excluded.")
-    lines.append("- Issues/PRs are counted via GitHub search (so PRs are not mistakenly included in issue counts).")
+    lines.append("- Issues/PRs prefer GitHub search; if unavailable, the script falls back to repo endpoints and filters issue/PR types.")
     lines.append("- Archived repos are excluded by default (edit script if you want them included).")
     lines.append("")
     return "\n".join(lines)
