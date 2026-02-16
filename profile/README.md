@@ -69,3 +69,9 @@ To keep new repos consistent (layout, tooling, CI expectations), this org also i
 - Use Issues for bugs/feature proposals.
 - Use PRs for changes; keep them small and include tests.
 - When touching cross-repo contracts, document the decision (ADRs) and link related ADRs across repos.
+
+---
+
+## Org Health
+<!-- HEALTH:START -->
+<!-- HEALTH:END -->

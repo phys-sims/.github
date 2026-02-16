@@ -1,0 +1,74 @@
+name: Org health report
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly on Monday. Cron is UTC.
+    - cron: "20 12 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    env:
+      ORG: phys-sims              
+      REPOS_DIR: /tmp/org_repos
+      GH_TOKEN: ${{ secrets.ORG_HEALTH_TOKEN }}
+
+    steps:
+      - name: Checkout .github repo
+        uses: actions/checkout@v4
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cloc
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Clone/update org repos (public + private)
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$REPOS_DIR"
+          cd "$REPOS_DIR"
+
+          gh api --paginate --slurp "orgs/$ORG/repos?per_page=100&type=all" \
+            | python - <<'PY' \
+            | while IFS=$'\t' read -r full name; do
+          import json, sys
+          repos = json.load(sys.stdin)
+          for r in repos:
+              if r.get("archived"):
+                  continue
+              # If you want to exclude forks, uncomment:
+              # if r.get("fork"): continue
+              print(f"{r['full_name']}\t{r['name']}")
+          PY
+              if [ -d "$name/.git" ]; then
+                echo "Updating $full"
+                git -C "$name" pull --ff-only
+              else
+                echo "Cloning $full"
+                gh repo clone "$full" "$name"
+              fi
+            done
+
+      - name: Run cloc per repo
+        run: |
+          bash scripts/health/run_cloc.sh "$REPOS_DIR"
+
+      - name: Generate unified health report + README block
+        run: |
+          python scripts/health/generate_health_report.py
+
+      - name: Commit updated report
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(health): update org health report"
+          file_pattern: "docs/HEALTH_REPORT.md profile/README.md"
