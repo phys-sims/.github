@@ -54,3 +54,7 @@ Pick the repo that matches your goal:
 - If you change a public contract or cross-repo boundary, add/update an ADR and link it.
 
 (Org-wide issue/PR templates are intended to live in this repository to standardize contributions.)
+
+## Org Health Summary 
+<!-- HEALTH:START -->
+<!-- HEALTH:END -->
