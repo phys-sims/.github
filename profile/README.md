@@ -2,76 +2,55 @@
 
 Physics-first simulation tooling in Python — focused on **reproducibility**, **typed contracts**, and **deterministic pipelines**.
 
-If you're an employer: this org is a portfolio of applied scientific software work (simulation architecture, testing/CI discipline, and API design for research tooling).
-If you're a collaborator (or future me): start at the “How the repos fit together” section and then jump into the repo that matches your goal.
+**Code owner / maintainer:** Ryaan Lari (@RyaanLari)  
+**Status snapshot date:** 2026-02-12
 
----
+## What this org is about
 
-## Highlights
+This org is a portfolio + working ecosystem for:
+- deterministic simulation cores with stable input/output contracts
+- pipeline-based execution (typed stages, provenance/caching hooks, artifacts-by-reference)
+- research tooling for reproducible experiments, sweeps, and optimization workflows
 
-- **Deterministic simulation cores** with stable input/output contracts (schemas + typed models)
-- **Pipeline architecture**: modular stages, provenance, caching hooks, optional artifact recording
-- **Engineering quality**: pytest discipline (including slow-test separation), linting/pre-commit, type-checking, docs/ADRs
+## Ecosystem map (what fits where)
 
----
+- **phys-pipeline** → pipeline runtime + typed stage contracts (sequential + DAG, caching hooks, artifacts)
+- **fiber-link-sim** → end-to-end deterministic fiber link simulator with stable `SimulationSpec → SimulationResult`
+- **research-utils** → deterministic experimentation + optimization + agent tooling (sim-agnostic core)
+- **abcdef-sim** → optics ABCDEF simulator scaffold built to sit on phys-pipeline (architecture-first; physics stage WIP)
+- **cpa-architecture** → cross-repo ADRs + ecosystem governance (repo boundaries, policies)
+- **cpa-workspace** (private) → meta repo to sync/dev multiple repos together
+- **abcdef-testbench** (private) → private experiment/testbench repo for abcdef work
+- **cookiecutter-phys / cookiecutter-testbench** → templates for consistent new repos
 
-## Flagship projects
+## Repositories (status + purpose)
 
-### 1) fiber-link-sim — deterministic fiber-optic link simulator core
-**What it is:** a physics backend with a stable `SimulationSpec → SimulationResult` contract, versioned schemas, and a staged link pipeline (Tx → Channel → Rx → DSP → FEC → Metrics).  
-**Why it matters:** this is the kind of “real” simulation backbone that upstream tools (GUIs, orchestrators, sweep runners) can reliably build on.  
-Repo: https://github.com/phys-sims/fiber-link-sim
+| Repo | Status | What it is | Key entry points |
+|---|---|---|---|
+| https://github.com/phys-sims/phys-pipeline | **Active** | Typed pipeline runtime (sequential + DAG), caching/provenance, artifacts | `README.md`, `docs/how-to-build-simulations.md`, `docs/adr/INDEX.md`, `docs/v2-release-notes.md` |
+| https://github.com/phys-sims/fiber-link-sim | **Active** | Deterministic fiber link simulator with stable schemas and staged pipeline | `README.md`, `STATUS.md`, `src/fiber_link_sim/schema/README.md`, `docs/stages_and_flags.md`, `docs/hft_latency_demo.md`, `docs/roadmaps/phys_pipeline_readiness.md` |
+| https://github.com/phys-sims/research-utils | **Active** | Deterministic experimentation + optimization + agent tooling (sim-agnostic) | `README.md`, `STATUS.md`, `docs/how-to-use-agents.md`, `docs/v0.3-roadmap.md`, `docs/v0.4-roadmap.md` |
+| https://github.com/phys-sims/abcdef-sim | **Active (scaffold; physics stage WIP)** | Architecture-first ABCDEF optics sim on phys-pipeline | `README.md`, `docs/architecture.md`, `docs/how-to-use.md`, `docs/adr/INDEX.md` |
+| https://github.com/phys-sims/cpa-architecture | **Active** | Cross-repo ADRs + ecosystem governance | `README.md`, `docs/adr/INDEX.md`, `docs/adr/ECO-0004-repository-roles-boundaries.md` |
+| https://github.com/phys-sims/cookiecutter-phys | **Active** | Cookiecutter template for new physics Python repos | `cookiecutter.json`, `{{cookiecutter.project_slug}}/README.md` |
+| https://github.com/phys-sims/cookiecutter-testbench | **Maintenance** | Cookiecutter template for private testbench repos | `cookiecutter.json`, `{{cookiecutter.project_slug}}/README.md` |
+| (private) https://github.com/phys-sims/cpa-workspace | **Active** | Multi-repo workspace orchestrator | `README.md`, `repos.toml`, `AGENTS.md` |
+| (private) https://github.com/phys-sims/abcdef-testbench | **Maintenance** | Private research testbench scaffold | `README.md` |
 
-### 2) phys-pipeline — typed runtime for physics simulation pipelines
-**What it is:** a lightweight framework for building and executing simulations as typed stages with deterministic execution, provenance/caching hooks, and optional artifact recording.  
-Repo: https://github.com/phys-sims/phys-pipeline
+## Getting started (fast path)
 
-### 3) abcdef-sim — ABCD ray tracing with dispersion
-**What it is:** extends ABCD ray tracing to include dispersion effects.  
-Repo: https://github.com/phys-sims/abcdef-sim
+Pick the repo that matches your goal:
 
-### 4) cpa-architecture — cross-repo ADRs and system-level conventions
-**What it is:** the “governance + architecture spine” for decisions that span multiple repos, including an ecosystem ADR process and repo-boundary rules.  
-Repo: https://github.com/phys-sims/cpa-architecture
+- Want the simulation runtime concepts? → start with **phys-pipeline**
+- Want an end-to-end simulator with a stable spec/result contract? → **fiber-link-sim**
+- Want reproducible experiments + optimization tooling? → **research-utils**
+- Want the optics ABCDEF simulator architecture? → **abcdef-sim**
+- Want cross-repo governance/decisions? → **cpa-architecture**
 
----
+## Contributing (single-owner model)
 
-## How the repos fit together (mental model)
+- Use Issues for bug reports and feature proposals.
+- Use PRs for code changes; keep PRs small and include tests.
+- If you change a public contract or cross-repo boundary, add/update an ADR and link it.
 
-- **phys-pipeline** = general-purpose pipeline runtime (typed stages, provenance/caching, artifacts)
-- **fiber-link-sim** = an end-to-end fiber link simulator that uses a staged pipeline approach + stable schemas for orchestration
-- **abcdef-sim** = a focused optics/ray-tracing simulator module
-- **cpa-architecture** = cross-repo ADRs + system conventions
-
----
-
-## Getting started (contributors)
-
-1. Pick a repo above and read its README.
-2. Install in editable mode and run the fast test suite.
-3. If you’re adding architecture or changing contracts, write/update ADRs.
-
----
-
-## Templates & repo bootstrap
-
-To keep new repos consistent (layout, tooling, CI expectations), this org also includes Cookiecutter templates:
-
-- `cookiecutter-phys` — bootstrap a new physics Python package repo
-- `cookiecutter-testbench` — bootstrap a testbench repo layout
-
-(These are intentionally minimal template repos; see their cookiecutter configs.)
-
----
-
-## Collaboration
-
-- Use Issues for bugs/feature proposals.
-- Use PRs for changes; keep them small and include tests.
-- When touching cross-repo contracts, document the decision (ADRs) and link related ADRs across repos.
-
----
-
-## Org Health
-<!-- HEALTH:START -->
-<!-- HEALTH:END -->
+(Org-wide issue/PR templates are intended to live in this repository to standardize contributions.)
