@@ -60,20 +60,20 @@ Pick the repo that matches your goal:
 
 ## Org health (auto-updated)
 
-- **15 repos** (private: **3**) — updated **2026-02-19**
-- **LOC (code): 36,261+**  |  **Open issues:** 0  |  **Open PRs:** 1
+- **15 repos** (private: **3**) — updated **2026-02-21**
+- **LOC (code): 40,615+**  |  **Open issues:** 0  |  **Open PRs:** 4
 
 **Top repos by LOC**
-- `fiber-link-sim` — 12,059
-- `cpa-sim` — 5,673
+- `fiber-link-sim` — 13,794
+- `cpa-sim` — 7,902
 - `phys-sims-utils` — 4,852
 - `phys-pipeline` — 4,409
 - `cpa-architecture` — 3,460
 
 **Most recently updated**
-- `cpa-sim` — 2026-02-19
-- `cpa-architecture` — 2026-02-19
-- `cpa-testbench` — 2026-02-18
+- `cpa-sim` — 2026-02-21
+- `cpa-testbench` — 2026-02-21
+- `fiber-link-sim` — 2026-02-21
 
 _Full report: `docs/HEALTH_REPORT.md`_
 
