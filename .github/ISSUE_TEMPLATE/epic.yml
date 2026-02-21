@@ -127,7 +127,7 @@ body:
     id: size
     attributes:
       label: Size (Epic)
-      options: ["S","M","L","XL"]
+      options: ["XS","S","M","L","XL"]
 
   - type: dropdown
     id: risklevel
