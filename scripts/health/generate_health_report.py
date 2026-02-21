@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import re
 import subprocess
+import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
-import tomllib  # Python 3.11+
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT_REPORT = ROOT / "docs" / "HEALTH_REPORT.md"
@@ -20,22 +21,30 @@ PROFILE_README = ROOT / "profile" / "README.md"
 METRICS_START = "<!-- HEALTH:START -->"
 METRICS_END = "<!-- HEALTH:END -->"
 
-ORG = os.environ.get("ORG", "").strip()
-REPOS_DIR = Path(os.environ.get("REPOS_DIR", "/tmp/org_repos")).resolve()
-
-if not ORG:
-    raise SystemExit("ORG env var is required (e.g. ORG=phys-sims).")
+DEFAULT_REPOS_DIR = Path(os.environ.get("REPOS_DIR", "/tmp/org_repos")).resolve()
 
 def sh(cmd: List[str]) -> str:
     return subprocess.check_output(cmd, text=True).strip()
 
-def gh_api_json(path: str) -> dict:
-    out = sh(["gh", "api", path])
+def gh_api_json(path: str, fields: Optional[List[Tuple[str, str]]] = None) -> dict:
+    cmd = ["gh", "api", path]
+    for k, v in fields or []:
+        cmd.extend(["-f", f"{k}={v}"])
+    out = sh(cmd)
     return json.loads(out) if out else {}
 
 def gh_api_json_slurp(path: str) -> List[dict]:
     out = sh(["gh", "api", "--paginate", "--slurp", path])
-    return json.loads(out) if out else []
+    if not out:
+        return []
+
+    data = json.loads(out)
+    if data and isinstance(data[0], list):
+        flattened: List[dict] = []
+        for page in data:
+            flattened.extend(page)
+        return flattened
+    return data
 
 def parse_iso(dt: str) -> datetime:
     # e.g. 2026-02-12T21:12:34Z
@@ -93,16 +102,10 @@ def inspect_repo_files(repo_dir: Path) -> Tuple[bool, Optional[str], bool, int, 
     project_name: Optional[str] = None
 
     if has_pyproject:
-        try:
-            data = tomllib.loads(pyproject.read_text(encoding="utf-8"))
-            project = data.get("project", {})
-            if isinstance(project, dict):
-                name = project.get("name")
-                if isinstance(name, str) and name.strip():
-                    project_name = name.strip()
-        except Exception:
-            # Don't fail the whole report if a repo has a weird pyproject
-            project_name = None
+        content = pyproject.read_text(encoding="utf-8")
+        m = re.search(r'(?ms)^\[project\]\s.*?^name\s*=\s*["\']([^"\']+)["\']', content)
+        if m:
+            project_name = m.group(1).strip()
 
     has_tests = (repo_dir / "tests").is_dir()
     workflows_dir = repo_dir / ".github" / "workflows"
@@ -114,14 +117,36 @@ def inspect_repo_files(repo_dir: Path) -> Tuple[bool, Optional[str], bool, int, 
     return has_pyproject, project_name, has_tests, workflow_count, has_precommit
 
 def count_open_prs(owner: str, repo: str) -> int:
+    # Prefer Search API when available (fast counts), but it can return 404
+    # for tokens/org setups without search access. Fall back to listing PRs.
     q = f"repo:{owner}/{repo} is:pr is:open"
-    res = gh_api_json(f"search/issues?q={q}")
-    return int(res.get("total_count", 0))
+    try:
+        res = gh_api_json("search/issues", fields=[("q", q)])
+        return int(res.get("total_count", 0))
+    except subprocess.CalledProcessError:
+        print(
+            f"warn: search/issues unavailable for {owner}/{repo}; falling back to pulls endpoint",
+            file=sys.stderr,
+        )
+
+    prs = gh_api_json_slurp(f"repos/{owner}/{repo}/pulls?state=open&per_page=100")
+    return len(prs)
 
 def count_open_issues(owner: str, repo: str) -> int:
+    # Prefer Search API when available (correct issue-only counts), but fall
+    # back to repository issues endpoint and filter out PR entries.
     q = f"repo:{owner}/{repo} is:issue is:open"
-    res = gh_api_json(f"search/issues?q={q}")
-    return int(res.get("total_count", 0))
+    try:
+        res = gh_api_json("search/issues", fields=[("q", q)])
+        return int(res.get("total_count", 0))
+    except subprocess.CalledProcessError:
+        print(
+            f"warn: search/issues unavailable for {owner}/{repo}; falling back to issues endpoint",
+            file=sys.stderr,
+        )
+
+    issues = gh_api_json_slurp(f"repos/{owner}/{repo}/issues?state=open&per_page=100")
+    return sum(1 for item in issues if "pull_request" not in item)
 
 def list_repos(owner: str) -> List[dict]:
     return gh_api_json_slurp(f"orgs/{owner}/repos?per_page=100&type=all")
@@ -252,7 +277,7 @@ def render_report(rows: List[RepoRow]) -> str:
     lines.append("## Notes")
     lines.append("")
     lines.append("- LOC is computed by `cloc` with common cache/build/vendor directories excluded.")
-    lines.append("- Issues/PRs are counted via GitHub search (so PRs are not mistakenly included in issue counts).")
+    lines.append("- Issues/PRs prefer GitHub search; if unavailable, the script falls back to repo endpoints and filters issue/PR types.")
     lines.append("- Archived repos are excluded by default (edit script if you want them included).")
     lines.append("")
     return "\n".join(lines)
@@ -307,14 +332,35 @@ def update_profile_readme(rows: List[RepoRow]) -> None:
 
     PROFILE_README.write_text(text2, encoding="utf-8")
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Generate org health report markdown + profile summary.")
+    parser.add_argument("--org", default=os.environ.get("ORG", "").strip(), help="GitHub organization name.")
+    parser.add_argument(
+        "--repos-dir",
+        default=str(DEFAULT_REPOS_DIR),
+        help="Path containing local org repository clones used for file inspections and cloc json alignment.",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
+    org = args.org.strip()
+    if not org:
+        raise SystemExit("ORG env var or --org is required (e.g. --org phys-sims).")
+
+    repos_dir = Path(args.repos_dir).resolve()
+
     CLOC_DIR.mkdir(parents=True, exist_ok=True)
     OUT_REPORT.parent.mkdir(parents=True, exist_ok=True)
 
-    if not REPOS_DIR.exists():
-        raise SystemExit(f"REPOS_DIR does not exist: {REPOS_DIR} (workflow should clone repos first)")
+    if not repos_dir.exists():
+        raise SystemExit(f"REPOS_DIR does not exist: {repos_dir} (workflow should clone repos first)")
 
-    rows = build_rows(ORG)
+    global REPOS_DIR
+    REPOS_DIR = repos_dir
+
+    rows = build_rows(org)
     OUT_REPORT.write_text(render_report(rows), encoding="utf-8")
     update_profile_readme(rows)
     print("Wrote docs/HEALTH_REPORT.md and updated profile/README.md (if present).")
