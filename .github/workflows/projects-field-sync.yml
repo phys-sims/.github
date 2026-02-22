@@ -126,6 +126,16 @@ jobs:
               return cleaned;
             }
 
+            function readSectionBlock(body, heading){
+              if (!body) return null;
+              const re = new RegExp(`(?:^|\\r?\\n)###\\s*${escRe(heading)}\\s*\\r?\\n([\\s\\S]*?)(?=\\r?\\n###|$)`, "i");
+              const m = body.match(re);
+              if (!m) return null;
+              const raw = m[1].replace(/\r/g,'').trim();
+              if (!raw || NO_RESP_RE.test(raw)) return null;
+              return raw;
+            }
+
             function readNumberFrom(body, ...headings){
               for (const h of headings){
                 const raw = readSection(body, h);
@@ -151,10 +161,10 @@ jobs:
             }
 
             function readBlockedByFromDependencies(body){
-              const deps = readSection(body, "Dependencies (Blocked By / Blocks)");
+              const deps = readSectionBlock(body, "Dependencies (Blocked By / Blocks)");
               if (!deps) return null;
               for (const line of deps.split("\n")) {
-                const m = line.match(/^\s*blocked\s*by\s*:\s*(.+)$/i);
+                const m = line.match(/^\s*(?:[-*+]\s*)?blocked\s*by\s*:\s*(.+)$/i);
                 if (m && m[1]) {
                   const v = m[1].trim();
                   if (!v || NO_RESP_RE.test(v) || v === "-") continue;
