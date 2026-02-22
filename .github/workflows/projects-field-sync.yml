@@ -150,6 +150,20 @@ jobs:
               return t;
             }
 
+            function readBlockedByFromDependencies(body){
+              const deps = readSection(body, "Dependencies (Blocked By / Blocks)");
+              if (!deps) return null;
+              for (const line of deps.split("\n")) {
+                const m = line.match(/^\s*blocked\s*by\s*:\s*(.+)$/i);
+                if (m && m[1]) {
+                  const v = m[1].trim();
+                  if (!v || NO_RESP_RE.test(v) || v === "-") continue;
+                  return v;
+                }
+              }
+              return null;
+            }
+
             async function listAllProjects(ownerKind, owner){
               const nodes = []; let after = null;
               while (true){
@@ -352,7 +366,11 @@ jobs:
             // numbers/text
             const estNum  = readNumberFrom(body, "Estimate (hrs)", "Estimate");
             const actNum  = readNumberFrom(body, "Actual (hrs)");
-            const blocked = readSection(body, "Blocked by") || readSection(body, "Blocked By") || readSection(body, "Block By");
+            const blocked =
+              readSection(body, "Blocked by") ||
+              readSection(body, "Blocked By") ||
+              readSection(body, "Block By") ||
+              readBlockedByFromDependencies(body);
 
             // apply updates
             const updates = [];
