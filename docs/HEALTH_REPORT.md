@@ -1,12 +1,12 @@
 # Org Health Report
 
-_Auto-generated: **2026-03-02 02:00 UTC**_
+_Auto-generated: **2026-03-02 13:35 UTC**_
 
 ## Summary
 
 - Repos counted: **17** (private: **3**)
 - LOC (code): **72,545**  |  comment: **2,086**  |  blank: **14,031**
-- Open issues: **1**  |  Open PRs: **7**
+- Open issues: **1**  |  Open PRs: **8**
 - CI workflows present: **12/17**
 - `tests/` present: **10/17**
 - `pyproject.toml` present: **10/17**
@@ -16,7 +16,7 @@ _Auto-generated: **2026-03-02 02:00 UTC**_
 
 | Repo | Private | Project | LOC (code) | Last push | Issues | PRs | CI | Tests |
 |---|:---:|---|---:|---:|---:|---:|:---:|:---:|
-| `pm-bot` |  | pm-bot | 25,078 | 2026-02-27 | 0 | 0 | ✅ | ✅ |
+| `pm-bot` |  | pm-bot | 25,078 | 2026-03-02 | 0 | 1 | ✅ | ✅ |
 | `fiber-link-sim` |  | fiber-link-sim | 13,794 | 2026-03-01 | 0 | 2 | ✅ | ✅ |
 | `cpa-sim` |  | cpa-sim | 13,678 | 2026-03-02 | 0 | 1 | ✅ | ✅ |
 | `phys-sims-utils` |  | phys-sims-utils | 4,852 | 2026-02-15 | 0 | 0 | ✅ | ✅ |
@@ -36,12 +36,12 @@ _Auto-generated: **2026-03-02 02:00 UTC**_
 
 | Repo | Last push | LOC (code) |
 |---|---:|---:|
-| `abcdef-sim` | 2026-03-02 | 3,083 |
+| `pm-bot` | 2026-03-02 | 25,078 |
 | `cpa-sim` | 2026-03-02 | 13,678 |
+| `.github` | 2026-03-02 | 0 |
+| `abcdef-sim` | 2026-03-02 | 3,083 |
 | `fiber-link-sim` | 2026-03-01 | 13,794 |
-| `.github` | 2026-02-27 | 0 |
 | `cpa-architecture` | 2026-02-27 | 2,977 |
-| `pm-bot` | 2026-02-27 | 25,078 |
 | `cpa-testbench` | 2026-02-25 | 1,278 |
 | `sandbox` | 2026-02-23 | 2 |
 | `gnlse-sim` | 2026-02-15 | 297 |
@@ -56,7 +56,7 @@ _Auto-generated: **2026-03-02 02:00 UTC**_
 
 | Repo | Private | Default branch | Project | LOC (code) | Last push | Issues | PRs | Workflows | Top langs (code LOC) |
 |---|:---:|---|---|---:|---:|---:|---:|---:|---|
-| `.github` |  | `main` |  | 0 | 2026-02-27 | 0 | 1 | 6 |  |
+| `.github` |  | `main` |  | 0 | 2026-03-02 | 0 | 1 | 6 |  |
 | `abcdef-sim` |  | `main` | abcdef-sim | 3,083 | 2026-03-02 | 0 | 1 | 5 | Python:1,199, YAML:1,043, Markdown:773, TOML:68 |
 | `abcdef-testbench` | 🔒 | `main` | abcdef-testbench | 114 | 2026-02-06 | 0 | 0 | 1 | YAML:55, TOML:28, Python:19, Markdown:12 |
 | `cookiecutter-phys` |  | `main` |  | 992 | 2026-02-06 | 0 | 0 | 0 | YAML:625, Python:173, Markdown:121, TOML:64, JSON:9 |
@@ -71,7 +71,7 @@ _Auto-generated: **2026-03-02 02:00 UTC**_
 | `gnlse-sim` |  | `main` | gnlse-sim | 297 | 2026-02-15 | 0 | 0 | 1 | YAML:93, Python:78, Markdown:77, TOML:49 |
 | `phys-pipeline` |  | `main` | phys-pipeline | 4,409 | 2026-02-12 | 0 | 0 | 9 | Python:2,068, Markdown:1,455, YAML:820, TOML:66 |
 | `phys-sims-utils` |  | `main` | phys-sims-utils | 4,852 | 2026-02-15 | 0 | 0 | 4 | Python:3,433, Markdown:1,223, YAML:136, TOML:60 |
-| `pm-bot` |  | `main` | pm-bot | 25,078 | 2026-02-27 | 0 | 0 | 4 | Python:12,859, Markdown:6,958, TypeScript:3,418, YAML:943, JSON:842 |
+| `pm-bot` |  | `main` | pm-bot | 25,078 | 2026-03-02 | 0 | 1 | 4 | Python:12,859, Markdown:6,958, TypeScript:3,418, YAML:943, JSON:842 |
 | `sandbox` |  | `main` |  | 2 | 2026-02-23 | 1 | 0 | 0 | Markdown:2 |
 
 ## Notes

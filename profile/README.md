@@ -61,7 +61,7 @@ Pick the repo that matches your goal:
 ## Org health (auto-updated)
 
 - **17 repos** (private: **3**) — updated **2026-03-02**
-- **LOC (code): 72,545+**  |  **Open issues:** 1  |  **Open PRs:** 7
+- **LOC (code): 72,545+**  |  **Open issues:** 1  |  **Open PRs:** 8
 
 **Top repos by LOC**
 - `pm-bot` — 25,078
@@ -71,9 +71,9 @@ Pick the repo that matches your goal:
 - `phys-pipeline` — 4,409
 
 **Most recently updated**
-- `abcdef-sim` — 2026-03-02
+- `pm-bot` — 2026-03-02
 - `cpa-sim` — 2026-03-02
-- `fiber-link-sim` — 2026-03-01
+- `.github` — 2026-03-02
 
 _Full report: `docs/HEALTH_REPORT.md`_
 
